@@ -15,8 +15,9 @@ class Minesweeper
   def save_game
     p "Enter File Name"
     saved = gets.chomp
-    File.open(saved, "w") do |out|
-      YAML.dump(self, out)
+    File.open(saved, "w") do |f|
+      YAML.dump(self, f)
+      # f.puts @game.to_yaml
     end
   end
 
@@ -182,10 +183,11 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   if ARGV[0]
-    f = ARGV[0]
+    f = ARGV.shift
     g = YAML.load_file(f)
   else
     g = Minesweeper.new
   end
   g.play
+
 end
