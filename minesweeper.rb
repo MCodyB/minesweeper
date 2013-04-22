@@ -32,6 +32,7 @@ class Minesweeper
         next
       elsif move == "S"
         save_game
+        return
       end
       p "Please enter coordinates x, y"
       coord = gets.chomp.split(',')
@@ -182,8 +183,7 @@ end
 if __FILE__ == $PROGRAM_NAME
   if ARGV[0]
     f = ARGV[0]
-    x = File.read(f)
-    g = YAML.load(x)
+    g = YAML.load_file(f)
   else
     g = Minesweeper.new
   end
