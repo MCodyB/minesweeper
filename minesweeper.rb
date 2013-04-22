@@ -12,7 +12,18 @@ class Board
       end
     end
     @board.flatten.sample(10).each{|tile| tile.mined = true}
+    set_board_count
   end
+
+  def set_board_count
+    @board.size.times do |x|
+      @board.size.times do |y|
+        set_count([x,y])
+      end
+    end
+  end
+
+
 
   def get_tile(coord)
     self.board[coord[0]][coord[1]]
@@ -29,13 +40,16 @@ class Board
     result
   end
 
-  def search_neighbors(tile)
-    coords = tile.coordinates
-    legals = legal_neighbors(coords)
-    count = 0
-    legals.each do |tile|
-      if tile.mined
-        count += 1
+  def set_count(coord)
+    tile = get_tile(coord)
+    if tile.mined
+      count = nil
+    else
+      legals = legal_neighbors(coord)
+      count = 0
+      legals.each do |nb|
+        tl = get_tile(nb)
+        count += 1 if tl.mined
       end
     end
     tile.count = count
@@ -47,7 +61,7 @@ class Board
     return :mined if tile.mined
 
     tile.state = tile.count.to_s
-    #
+
     if tile.count == 0
       tile.state = "-"
       legal_neighbors(tile.coordinates).each do |pos|
