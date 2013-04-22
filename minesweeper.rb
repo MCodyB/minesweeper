@@ -55,6 +55,10 @@ class Board
     tile.count = count
   end
 
+  def reveal_bombs
+    @board.flatten.each{|piece| p piece.coordinates if piece.mined}
+  end
+
   def check_tile(coord)
     tile = get_tile(coord)
 
@@ -87,8 +91,6 @@ end
 
 class Tile
   attr_accessor :mined, :coordinates, :count, :state, :flag
-
-  @@num_bombs = 0
 
   def initialize(coords)
     @coordinates = coords
