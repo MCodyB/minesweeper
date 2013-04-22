@@ -14,7 +14,6 @@ class Minesweeper
   def play
     until lost == "L" || won
       @game.display
-      won = win_check?
 
       p "Enter R for reveal or F for flag"
       move = gets.chomp.upcase
@@ -32,6 +31,8 @@ class Minesweeper
       elsif move == "F"
         toggle_flag(coord)
       end
+
+      won = win_check?
     end
     p won ? "You WON!!!!!!!!!!!!!!!!!!!!!!" : "LOSER :( :( :( :( :("
   end
