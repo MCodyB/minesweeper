@@ -12,13 +12,14 @@ class Minesweeper
 
 
   def play
+    lost, won = nil
     until lost == "L" || won
       @game.display
 
       p "Enter R for reveal or F for flag"
       move = gets.chomp.upcase
       p "Please enter coordinates x, y"
-      coord = gets.chomp.split(/D+/)
+      coord = gets.chomp.split(',')
       coord = [coord[0].to_i, coord[1].to_i]
 
       if move == "R"
@@ -46,6 +47,7 @@ class Minesweeper
       x = coord[0]
       y = coord[1]
       @game.get_tile([x,y]).state = "F"
+    end
   end
 end
 
@@ -96,7 +98,6 @@ class Board
       count = nil
     else
       legals = legal_neighbors(coord)
-      p legals
       count = 0
       legals.each do |nb|
         tl = get_tile(nb)
@@ -107,7 +108,7 @@ class Board
   end
 
   def reveal_bombs
-    @board.flatten.collect{|piece| piece.mined}
+    @board.flatten.collect{|piece| piece.coordinates if piece.mined}.compact
   end
 
   def check_tile(coord)
@@ -116,9 +117,12 @@ class Board
     if tile.mined
       return "L"
 
-    elsif tile.count > 0
-      tile.state = tile.count.to_s
+    elsif !(tile.state == '*')
       return
+
+    elsif tile.count > 0
+      return tile.state = tile.count.to_s
+
 
     elsif tile.count == 0
       tile.state = "-"
@@ -137,7 +141,11 @@ class Board
       end
       result << temp
     end
-    p result
+    i = 0
+    result.each do |row|
+      p "#{i} #{row}"
+      i += 1
+    end
   end
 
 end
