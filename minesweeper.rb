@@ -15,17 +15,9 @@ class Minesweeper
   def save_game
     p "Enter File Name"
     saved = gets.chomp
-    x = self.to_yaml
-    YAML.open(saved, "w") do |out|
-      YAML.dump(x, out)
+    File.open(saved, "w") do |out|
+      YAML.dump(self, out)
     end
-  end
-
-  def load_game
-    p "Enter file to load"
-    load = gets.chomp
-    g = YAML.load(load)
-    g.play
   end
 
   def play
@@ -33,15 +25,13 @@ class Minesweeper
     until lost == "L" || won
       @game.display
 
-      p "Enter R for reveal or F for flag, S for save, and L for load."
+      p "Enter R for reveal or F for flag, S for save."
       move = gets.chomp.upcase
       if !(move =~ /[FRSL]/)
         p "Invalid entry"
         next
       elsif move == "S"
         save_game
-      elsif move == "L"
-        load_game
       end
       p "Please enter coordinates x, y"
       coord = gets.chomp.split(',')
@@ -170,7 +160,7 @@ class Board
     end
     i = 0
     result.each do |row|
-      p "#{i} #{row}"
+      puts "#{i} #{row}"
       i += 1
     end
   end
@@ -190,5 +180,12 @@ end
 
 
 if __FILE__ == $PROGRAM_NAME
-
+  if ARGV[0]
+    f = ARGV[0]
+    x = File.read(f)
+    g = YAML.load(x)
+  else
+    g = Minesweeper.new
+  end
+  g.play
 end
