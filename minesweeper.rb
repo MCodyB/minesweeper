@@ -33,8 +33,10 @@ class Board
     possible_neighbors = [[1,1], [1,-1], [1,0], [0,1],                            [0,-1], [-1, 1], [-1, -1], [-1, 0]]
     result = []
     possible_neighbors.each do |coor|
-      if (0..9).include?(coord[0] + coor[0]) && (0..9).include?(coord[1] + coor[1])
-        result << coor
+      x_coor = coord[0] + coor[0]
+      y_coor = coord[1] + coor[1]
+      if (0...9).include?(x_coor) && (0...9).include?(y_coor)
+        result << [x_coor, y_coor]
       end
     end
     result
@@ -46,6 +48,7 @@ class Board
       count = nil
     else
       legals = legal_neighbors(coord)
+      p legals
       count = 0
       legals.each do |nb|
         tl = get_tile(nb)
@@ -62,11 +65,14 @@ class Board
   def check_tile(coord)
     tile = get_tile(coord)
 
-    return :mined if tile.mined
+    if tile.mined
+      return "You Lose"
 
-    tile.state = tile.count.to_s
+    elsif tile.count > 0
+      tile.state = tile.count.to_s
+      return
 
-    if tile.count == 0
+    elsif tile.count == 0
       tile.state = "-"
       legal_neighbors(tile.coordinates).each do |pos|
         check_tile(pos)
