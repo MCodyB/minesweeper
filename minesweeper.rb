@@ -1,4 +1,51 @@
 class Minesweeper
+  attr_accessor :game, :flagged, :bombed
+  def initialize(size = 9)
+    @game = Board.new(size)
+    @bombed = @game.reveal_bombs
+    @flagged = []
+  end
+
+  def win_check?
+    @bombed.sort == @flagged.sort
+  end
+
+
+  def play
+    until lost == "L" || won
+      @game.display
+      won = win_check?
+
+      p "Enter R for reveal or F for flag"
+      move = gets.chomp.upcase
+      p "Please enter coordinates x, y"
+      coord = gets.chomp.split(/D+/)
+      coord = [coord[0].to_i, coord[1].to_i]
+
+      if move == "R"
+        if @flagged.include?(coord)
+          p "That has been flagged"
+          next
+        else
+          lost = @game.check_tile(coord)
+        end
+      elsif move == "F"
+        toggle_flag(coord)
+      end
+    end
+    p won ? "You WON!!!!!!!!!!!!!!!!!!!!!!" : "LOSER :( :( :( :( :("
+  end
+
+  def toggle_flag(coord)
+    if @flagged.include?(coord)
+      game.get_tile(coord).state = "*"
+      @flagged.delete(coord)
+    else
+      @flagged << coord
+      x = coord[0]
+      y = coord[1]
+      @game.get_tile([x,y]).state = "F"
+  end
 end
 
 
@@ -59,14 +106,14 @@ class Board
   end
 
   def reveal_bombs
-    @board.flatten.each{|piece| p piece.coordinates if piece.mined}
+    @board.flatten.collect{|piece| piece.mined}
   end
 
   def check_tile(coord)
     tile = get_tile(coord)
 
     if tile.mined
-      return "You Lose"
+      return "L"
 
     elsif tile.count > 0
       tile.state = tile.count.to_s
