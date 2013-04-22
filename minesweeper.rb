@@ -1,3 +1,5 @@
+require 'yaml'
+
 class Minesweeper
   attr_accessor :game, :flagged, :bombed
   def initialize(size = 9)
@@ -10,14 +12,37 @@ class Minesweeper
     @bombed.sort == @flagged.sort
   end
 
+  def save_game
+    p "Enter File Name"
+    saved = gets.chomp
+    x = self.to_yaml
+    YAML.open(saved, "w") do |out|
+      YAML.dump(x, out)
+    end
+  end
+
+  def load_game
+    p "Enter file to load"
+    load = gets.chomp
+    g = YAML.load(load)
+    g.play
+  end
 
   def play
     lost, won = nil
     until lost == "L" || won
       @game.display
 
-      p "Enter R for reveal or F for flag"
+      p "Enter R for reveal or F for flag, S for save, and L for load."
       move = gets.chomp.upcase
+      if !(move =~ /[FRSL]/)
+        p "Invalid entry"
+        next
+      elsif move == "S"
+        save_game
+      elsif move == "L"
+        load_game
+      end
       p "Please enter coordinates x, y"
       coord = gets.chomp.split(',')
       coord = [coord[0].to_i, coord[1].to_i]
@@ -31,6 +56,8 @@ class Minesweeper
         end
       elsif move == "F"
         toggle_flag(coord)
+      elsif move == "S"
+
       end
 
       won = win_check?
@@ -162,3 +189,6 @@ class Tile
 end
 
 
+if __FILE__ == $PROGRAM_NAME
+
+end
